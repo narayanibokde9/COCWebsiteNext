@@ -1,113 +1,190 @@
-import Image from 'next/image'
+import React, { Suspense, lazy } from "react";
+import { createBrowserHistory } from "history";
+import configureStore from "../store/configureStore";
+import { Box, ThemeProvider, createTheme } from '@mui/material';
+import { responsiveFontSizes } from '@mui/material/styles';
 
-export default function Home() {
+import ProtectedRoute from "./ProtectedRoute";
+import Header from "./components/Header";
+import Footer from "./components/footer/Footer";
+import Spinner from "./components/spinner/Spinner";
+import ScrollToTop from "./components/Utilities/ScrollToTop";
+
+// Lazy components start here
+// Auth
+const LazySignin = lazy(() => import("./components/auth/Signin"));
+const LazySignup = lazy(() => import("./components/auth/Signup"));
+const LazyResetPw = lazy(() => import("./components/auth/ResetPw"));
+const LazyNewPw = lazy(() => import("./components/auth/NewPw"));
+const LazyVerifyEmail = lazy(() => import("./components/auth/VerifyEmail"));
+
+// Pages
+const LazyHome = lazy(() => import("./components/Home/Home"));
+const LazyAbout = lazy(() => import("./components/about-us/AboutUs"));
+const LazyResourcePage = lazy(() =>
+  import("./components/resources/ResourcePage")
+);
+const LazyRegisterEvent = lazy(() =>
+  import("./components/events/RegisterEvent")
+);
+const LazyProjectList = lazy(() => import("./components/projects/ProjectList"));
+const LazyProjects = lazy(() => import("./components/projects/Projects"));
+const LazyAlumniPage = lazy(() => import("./components/alumni/AlumniPage"));
+
+// Blogs
+const LazyBlogs = lazy(() => import("./components/blogs/Blog"));
+const LazyIndividualBlog = lazy(() =>
+  import("./components/blogs/IndividualBlog")
+);
+const LazyAddBlog = lazy(() => import("./components/blogs/AddBlog"));
+
+// Events
+const LazyEventList = lazy(() => import("./components/events/EventList"));
+const LazyAddEvent = lazy(() => import("./components/events/AddEvent"));
+const LazyIndividualEvent = lazy(() => import("./components/events/EventPage"));
+
+// Magazines
+const LazyMagazines = lazy(() => import("./components/magazines/Magazines"));
+const LazyAddMagazine = lazy(() =>
+  import("./components/magazines/AddMagazine")
+);
+
+// Experiences
+const LazyWriteExperience = lazy(() =>
+  import("./components/experiences/WriteExperience")
+);
+const LazyCompanyList = lazy(() =>
+  import("./components/experiences/CompanyList")
+);
+const LazyExperienceList = lazy(() =>
+  import("./components/experiences/ExperienceList")
+);
+const LazyManageCompanies = lazy(() =>
+  import("./components/experiences/ManageCompanies")
+);
+const LazyAddCompany = lazy(() =>
+  import("./components/experiences/AddCompany")
+);
+const LazyManageExperiences = lazy(() =>
+  import("./components/experiences/ManageExperiences")
+);
+const LazyVerifyExperience = lazy(() =>
+  import("./components/experiences/VerifyExperience")
+);
+const LazyReadExperience = lazy(() =>
+  import("./components/experiences/ReadExperience")
+);
+const LazyMyExperiences = lazy(() =>
+  import("./components/experiences/MyExperiences")
+);
+
+const theme = responsiveFontSizes(createMuiTheme());
+const Lazy404 = lazy(() => import("./components/404/NotFound"));
+
+function App() {
+  const store = configureStore();
+  const history = createBrowserHistory();
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
+    <Provider store={store}>
+      <Router history={history}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          className="App"
+          style={{
+            position: "relative",
+            minHeight: "100vh",
+          }}
         >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+          <Box>
+            <Header />
+          </Box>
+          <ScrollToTop />
+          <ThemeProvider theme={theme}>
+            <Box
+              flexGrow={1}
+              style={{ marginBottom: "auto", minHeight: "80vh" }}
+            >
+              <Suspense fallback={<Spinner />}>
+                <Switch>
+                  <Route exact path="/" component={LazyHome} />
+                  <Route path="/about" component={LazyAbout} />
+                  <Route exact path="/blogs" render={() => <LazyBlogs />} />
+                  <Route path="/signin" component={LazySignin} />
+                  <Route path="/reset" component={LazyResetPw} />
+                  <Route path="/newpass/:token" component={LazyNewPw} />
+                  <Route
+                    path="/verifyemail/:token"
+                    component={LazyVerifyEmail}
+                  />
+                  <ProtectedRoute
+                    exact
+                    path="/addblog"
+                    component={LazyAddBlog}
+                  />
+                  <Route path="/blogs/:id" component={LazyIndividualBlog} />
+                  <Route
+                    path="/blogs?tag=:tag"
+                    render={() => <LazyBlogs key={window.location} />}
+                  />
+                  <ProtectedRoute
+                    path="/blog/edit/:id"
+                    component={LazyAddBlog}
+                  />
+                  <Route path="/signup" component={LazySignup} />
+                  <Route
+                    exact
+                    path="/events/:id"
+                    component={LazyIndividualEvent}
+                  />
+                  <Route path="/events" component={LazyEventList} />
+                  <ProtectedRoute path="/addevent" component={LazyAddEvent} />
+                  <ProtectedRoute
+                    path="/event/edit/:id"
+                    component={LazyAddEvent}
+                  />
+                  <Route
+                    path="/events/register"
+                    component={LazyRegisterEvent}
+                  />
+                  <Route path="/resources" component={LazyResourcePage} />
+                  <Route path="/projects/:id" component={LazyProjectList} />
+                  <Route path="/projects" component={LazyProjects} />
+                  <Route path="/alumni" component={LazyAlumniPage} />
+                  <Route path="/magazines" component={LazyMagazines} />
+                  <ProtectedRoute
+                    path="/addmagazine"
+                    component={LazyAddMagazine}
+                  />
+                  <ProtectedRoute
+                    path="/magazine/edit/:id"
+                    component={LazyAddMagazine}
+                  />
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+                  <ProtectedRoute path="/writeexp" component={LazyWriteExperience} />
+                  <Route path="/exp/list/:id" component={LazyExperienceList} />
+                  <Route path="/exp/edit/:id" component={LazyWriteExperience} />
+                  <Route path="/exp/:id" component={LazyReadExperience} />
+                  <Route path="/exp" component={LazyCompanyList} />
+                  <ProtectedRoute path="/myexp" component={LazyMyExperiences} />
+                  <ProtectedRoute path="/managecompanies" component={LazyManageCompanies} />
+                  <ProtectedRoute path="/addcompany" component={LazyAddCompany} />
+                  <ProtectedRoute path="/manageexperiences" component={LazyManageExperiences} />
+                  <ProtectedRoute path="/verifyexperience/:id" component={LazyVerifyExperience} />
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+                  <Route component={Lazy404} />
+                </Switch>
+              </Suspense>
+            </Box>
+          </ThemeProvider>
+          <Box>
+            <Footer />
+          </Box>
+        </Box>
+      </Router>
+    </Provider>
+  );
 }
+
+export default App;
